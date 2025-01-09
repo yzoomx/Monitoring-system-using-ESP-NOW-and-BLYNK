@@ -1,0 +1,38 @@
+1: include <WiFi.h>, <esp_now.h>, <HardwareSerial.h>
+2: create instance mySerial ← HardwareSerial(2)
+3: define gasSensorPin ← 39, ledPin ← 2
+4: initialize gazz ← 0, temp ← 0, hum ← 0, mot ← 0, wat ← 0
+5: struct Node1Data ← {id, temperature, humidity}
+6: struct Node2Data ← {id, waterDetected, motionDetected}
+7: create instances node1Data ← Node1Data(), node2Data ← Node2Data()
+
+8: onDataRecv(mac, incomingData, len):
+9:     if incomingData[0] == 1:
+10:        memcpy(&node1Data, incomingData, sizeof(node1Data))
+11:        temp ← (int)node1Data.temperature
+12:        hum ← (int)node1Data.humidity
+13:    else if incomingData[0] == 2:
+14:        memcpy(&node2Data, incomingData, sizeof(node2Data))
+15:        mot ← node2Data.motionDetected
+16:        wat ← node2Data.waterDetected
+
+17: setup():
+18:    initialize serial communication
+19:    mySerial.begin(9600, SERIAL_8N1, 16, 17)
+20:    pinMode(gasSensorPin, INPUT)
+21:    pinMode(ledPin, OUTPUT)
+22:    digitalWrite(ledPin, LOW)
+23:    WiFi.mode(WIFI_STA)
+24:    if esp_now_init() != ESP_OK:
+25:        print "Error initializing ESP-NOW"
+26:        return
+27:    esp_now_register_recv_cb(onDataRecv)
+28:    print "Setup complete, starting loop..."
+
+29: loop():
+30:    gazz ← analogRead(gasSensorPin)
+31:    print temp, hum, gazz, mot, wat
+32:    mySerial.print(temp, "-", hum, "-", gazz, "-", mot, "-", wat)
+33:    ledState ← digitalRead(ledPin)
+34:    digitalWrite(ledPin, !ledState)
+35:    delay(1000)

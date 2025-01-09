@@ -1,0 +1,30 @@
+1: define BLYNK_TEMPLATE_ID ← "TMPL6nUxJujWn", BLYNK_TEMPLATE_NAME ← "Home Automation", BLYNK_AUTH_TOKEN ← "hQcHtb4RUVBz0ZXlJzAj2G5qQ2EogP7a"
+2: define BLYNK_PRINT ← Serial
+3: include <ESP8266WiFi.h>, <BlynkSimpleEsp8266.h>
+4: define ledPin ← 2
+5: define ssid[] ← "ESP32", pass[] ← "6789054321"
+6: define gas_vpin ← V1, temperature_vpin ← V2, humidity_vpin ← V3, motion_vpin ← V4, waterLvl_vpin ← V5
+
+7: setup():
+8:     pinMode(ledPin, OUTPUT)
+9:     digitalWrite(ledPin, HIGH)
+10:    initialize serial communication
+11:    Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass)
+
+12: loop():
+13:    Blynk.run()
+14:    if Serial.available() > 0:
+15:        data ← Serial.readStringUntil('\n')
+16:        declare temperature, humidity, gas, motion, waterPresence
+17:        sscanf(data.c_str(), "%d-%d-%d-%d-%d", &temperature, &humidity, &gas, &motion, &waterPresence)
+18:        print "Received values:", temperature, humidity, gas, motion, waterPresence
+19:        Blynk.virtualWrite(temperature_vpin, temperature)
+20:        Blynk.virtualWrite(humidity_vpin, humidity)
+21:        Blynk.virtualWrite(gas_vpin, gas)
+22:        Blynk.virtualWrite(motion_vpin, motion)
+23:        Blynk.virtualWrite(waterLvl_vpin, waterPresence)
+24:        currentState ← digitalRead(ledPin)
+25:        if currentState == LOW:
+26:            digitalWrite(ledPin, HIGH) // Turn LED off
+27:        else:
+28:            digitalWrite(ledPin, LOW) // Turn LED on

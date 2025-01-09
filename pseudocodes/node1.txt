@@ -1,0 +1,40 @@
+1: include <esp_now.h>, <WiFi.h>, <DHT.h>
+2: define DHTPIN ← 5, DHTTYPE ← DHT22
+3: create instance dht ← DHT(DHTPIN, DHTTYPE)
+4: define ledPin ← 15
+5: struct Node1Data ← {id, temperature, humidity}
+6: create instance myData ← Node1Data()
+7: define hubAddress[] ← {0x78, 0x21, 0x84, 0xC6, 0xD2, 0xEC}
+
+8: setup():
+9:     initialize serial communication
+10:    pinMode(ledPin, OUTPUT)
+11:    digitalWrite(ledPin, LOW)
+12:    dht.begin()
+13:    WiFi.mode(WIFI_STA), WiFi.disconnect()
+14:    if esp_now_init() != ESP_OK:
+15:        print "Error initializing ESP-NOW"
+16:        return
+17:    peer ← {hubAddress, 0, false}
+18:    if esp_now_add_peer(&peer) != ESP_OK:
+19:        print "Failed to add peer"
+20:        return
+
+21: loop():
+22:    temperature ← dht.readTemperature()
+23:    humidity ← dht.readHumidity()
+24:    if isnan(temperature) ∨ isnan(humidity):
+25:        print "Failed to read from DHT sensor!"
+26:        return
+27:    myData.id ← 1
+28:    myData.temperature ← temperature
+29:    myData.humidity ← humidity
+30:    print myData
+31:    result ← esp_now_send(hubAddress, &myData, sizeof(myData))
+32:    if result == ESP_OK:
+33:        print "SUCCESSFULLY"
+34:        ledState ← digitalRead(ledPin)
+35:        digitalWrite(ledPin, !ledState)
+36:    else:
+37:        print "FAILED TO SEND"
+38:    delay(500)

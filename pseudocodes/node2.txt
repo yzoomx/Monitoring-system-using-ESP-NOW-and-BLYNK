@@ -1,0 +1,37 @@
+1: include <esp_now.h>, <WiFi.h>
+2: define WATER_SENSOR_PIN ← 3, MOTION_SENSOR_PIN ← 5
+3: define ledPin ← 15
+4: struct Node2Data ← {id, waterDetected, motionDetected}
+5: create instance myData ← Node2Data()
+6: define hubAddress[] ← {0x78, 0x21, 0x84, 0xC6, 0xD2, 0xEC}
+
+7: setup():
+8:     initialize serial communication
+9:     pinMode(WATER_SENSOR_PIN, INPUT)
+10:    pinMode(MOTION_SENSOR_PIN, INPUT)
+11:    pinMode(ledPin, OUTPUT)
+12:    digitalWrite(ledPin, LOW)
+13:    WiFi.mode(WIFI_STA), WiFi.disconnect()
+14:    if esp_now_init() != ESP_OK:
+15:        print "Error initializing ESP-NOW"
+16:        return
+17:    peer ← {hubAddress, 0, false}
+18:    if esp_now_add_peer(&peer) != ESP_OK:
+19:        print "Failed to add peer"
+20:        return
+
+21: loop():
+22:    waterDetected ← digitalRead(WATER_SENSOR_PIN)
+23:    motionDetected ← digitalRead(MOTION_SENSOR_PIN)
+24:    myData.id ← 2
+25:    myData.waterDetected ← waterDetected
+26:    myData.motionDetected ← motionDetected
+27:    print myData
+28:    result ← esp_now_send(hubAddress, &myData, sizeof(myData))
+29:    if result == ESP_OK:
+30:        print "SUCCESSFULLY"
+31:        ledState ← digitalRead(ledPin)
+32:        digitalWrite(ledPin, !ledState)
+33:    else:
+34:        print "FAILED TO SEND"
+35:    delay(500)
