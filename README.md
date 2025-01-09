@@ -1,10 +1,5 @@
 # Smart Home Monitoring Project
 
-## Participants
-- **B2105.010052 Tariq Ahmad** (Section 4 - Wednesday)
-- **B2205.010035 Daniah Ayad Tareq Al-Sultani** (Section 3 - Tuesday)
-- **B2105.010055 Yousef Aboismail** (Section 3 - Tuesday)
-- **B2105.010002 Mohammad Rauf** (Section 3 - Tuesday)
 
 ## Course Instructor
 **Öğr. Gör. Dr. MHD WASIM RAED**
