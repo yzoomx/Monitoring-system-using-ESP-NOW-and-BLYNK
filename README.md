@@ -1,9 +1,5 @@
 # 🏠 Smart Home Monitoring Project
 
-
-## 👨‍🏫 Course Instructor
-**Öğr. Gör. Dr. MHD WASIM RAED**
-
 ## 🎯 Project Overview
 This project, titled "Home Automation using Microcontrollers," aims to develop an advanced home automation system that integrates multiple sensors to monitor environmental conditions and security parameters. The primary goal is to create a cohesive and efficient network that enhances the convenience and safety of modern living spaces.
 
